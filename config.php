@@ -9,3 +9,6 @@ $db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
 \sso\config::$passwordstore = new \sso\PasswordStore\htpasswd('/etc/apache2/passwords.htpasswd');
 \sso\config::$datastore = new \sso\DataStore\PDO($db);
+
+// This can be uset to limit the aquisition of tokens to certain domains & URLs
+// \sso\config::$token_whitelist_pattern = '/^https:\/\/.*/';
