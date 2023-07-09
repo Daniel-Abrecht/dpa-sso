@@ -13,4 +13,4 @@ if(!isset($login)){
   }
 }
 
-$self_origin = 'https://' . $_SERVER['HTTP_HOST'] === $_SERVER['HTTP_ORIGIN'];
+$self_origin = 'https://' . $_SERVER['HTTP_HOST'] === ($_SERVER['HTTP_ORIGIN']??null);
