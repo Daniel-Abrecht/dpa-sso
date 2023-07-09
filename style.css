@@ -1,0 +1,220 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    background-color: #000;
+    color: #FFF;
+  }
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+header > * {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+  padding: var(--padding);
+  border-left: 1px dotted;
+  border-right: 1px dotted;
+  margin-right: -1px;
+  white-space: nowrap;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+body > * {
+  flex-shrink: 0;
+}
+
+header {
+  display: flex;
+  margin-left: -1px;
+  overflow: hidden;
+  --padding: 1em;
+  background-color: #00FFFF88;
+  flex-wrap: wrap;
+}
+
+header > .right {
+  margin-left: auto;
+}
+
+header > .right ~ .right {
+  margin-left: 0;
+}
+
+header > form {
+  padding: 0;
+}
+
+main {
+  padding: 1em;
+  overflow: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+h1 {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.btn:not(#a:root) {
+  padding: 0.5em 1em;
+  background-color: #FF444488;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+  border: 1px solid #00FF0088;
+}
+
+thead {
+  background-color: #00FF0088;
+}
+
+td, th {
+  text-align: left;
+  padding: 0.5em 1em;
+  min-width: 30em;
+}
+
+tr:nth-child(even) {
+  background-color: #00FF0033;
+}
+
+td:not(:first-child), th:not(:first-child) {
+  border-left: 1px dotted;
+}
+
+.s {
+  min-width: 0;
+  width: 0;
+  white-space: nowrap;
+}
+
+/* Form styles */
+
+form {
+  max-width: max-content;
+}
+
+form > input[type="submit"]:first-child:last-child {
+  all: unset;
+  cursor: pointer;
+  padding: var(--padding);
+}
+
+form > * {
+  display: block;
+  padding: 0.5em;
+}
+form span {
+  display: flex;
+  align-items: stretch;
+}
+form span > * {
+  flex: 1;
+  text-align: center;
+}
+form input {
+  text-align: left;
+  background: transparent;
+  border: 0 none;
+  font: inherit;
+  padding: 0.5em;
+  box-shadow:
+    inset 0.2em 0.2em 0.5em -0.2em #000,
+    0 0 0.2em
+  ;
+  /*border: 1px solid #000;*/
+  background-color: #CCCCCC22;
+}
+
+form del,
+form > input[type="radio"],
+form > input[type="checkbox"] {
+  position: fixed;
+  left: -100px;
+  top: -100px;
+}
+form label {
+  font-weight: bold;
+  cursor: pointer;
+}
+form > * > * {
+  text-align: left;
+}
+form > * > :first-child {
+  text-align: right;
+  margin-bottom: 0.25em;
+}
+input[type="button"], input[type="submit"], label[for] {
+  background-color: #AA88FF;
+  border: 0 none;
+  padding: 0.5em 1em;
+  font: inherit;
+  font-weight: bold;
+  border-radius: 0.25em;
+  box-shadow: none;
+  cursor: pointer;
+}
+form span > *:not(:root) {
+  border-radius: 0;
+  margin-left: 1px;
+  margin-bottom: 0;
+}
+form span > :first-child {
+  border-top-left-radius: 0.25em;
+  border-bottom-left-radius: 0.25em;
+}
+form span > :last-child {
+  border-top-right-radius: 0.25em;
+  border-bottom-right-radius: 0.25em;
+  margin-right: 0;
+}
+form span > :first-child:last-child {
+  min-width: 100%;
+}
+
+input[type="submit"] {
+  background-color: #88AA44;
+  float: right;
+}
+
+form:not(:valid) input[type="submit"] {
+  visibility: hidden;
+}
+
+input:not(:valid) {
+  color: red;
+}
+
+.infobox {
+  padding: 0.5em 1em;
+  border: 1px solid;
+  border-radius: 0.5em;
+  margin: 1em;
+}
+
+.infobox.error {
+  border-color: red;
+}
+
+.infobox.ok {
+  border-color: green;
+}
+
