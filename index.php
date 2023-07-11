@@ -11,7 +11,7 @@ $self_origin = 'https://' . $_SERVER['HTTP_HOST'] === ($_SERVER['HTTP_ORIGIN']??
 
 $referer_origin=null;
 $referer_location=null;
-$referer = ($self_origin?null:$_SERVER['HTTP_REFERER']) ?? $_POST['referer'] ?? null;
+$referer = ($self_origin?null:$_SERVER['HTTP_REFERER']) ?? $_REQUEST['referer'] ?? null;
 if( !$referer
  || !str_starts_with($referer, 'https://')
  ||  str_starts_with($referer, 'https://'.$_SERVER['HTTP_HOST'])
@@ -30,7 +30,8 @@ $login = null;
 function saveSession(){
   global $login;
   if(!$login) return;
-  $login->user_agent = @$_SERVER['HTTP_USER_AGENT'];
+  if(@$_SERVER['HTTP_USER_AGENT'])
+    $login->user_agent = @$_SERVER['HTTP_USER_AGENT'];
   \sso::save($login);
   setcookie("sso-session", $login->token, [
     'expires' => time()+2*24*60*60,
@@ -52,7 +53,7 @@ if(isset($_GET['renew-token']) && $_GET['renew-token']){
     $login = \sso::load(\sso\Session::class, $token_to_renew->session);
   if(!$login)
     $token_to_renew = null;
-  if($token_to_renew->stale)
+  if($token_to_renew && $token_to_renew->stale)
     $token_to_renew = null;
 }
 
@@ -109,7 +110,10 @@ if($referer && isset($_GET['renew-token'])){
     $auth->session = $login->token;
   }
   \sso::save($auth);
-  header("Location: $referer_origin/sso/?user=".rawurlencode($login->user)."&token=".rawurlencode($auth->token)."&location=".rawurlencode($referer_location));
+  header("HTTP/1.1 303 See Other");
+  header("X-User: ".$login->user);
+  header("X-Token: ".$auth->token);
+  header("Location: $referer_origin/sso/?token=".rawurlencode($auth->token)."&location=".rawurlencode($referer_location));
   exit();
 }else{
   require("main.php");

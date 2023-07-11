@@ -11,7 +11,7 @@ class Session {
   public \DateTimeInterface $last_update;
   public ?int $valid_for = null;
   public string $user;
-  public string $user_agent;
+  public ?string $user_agent;
 }
 
 class Authorization {
