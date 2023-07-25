@@ -9,7 +9,7 @@ and change your password.
 
 If the page is opened with the `renew-token` GET parameter set, and the HTTP `Referer` header is also set,
 a token will be checked, created, or renewed, and the existing or a new token is sent back, to the URL origin derived from the HTTP `Referer`,
-with the location `/sso/`, and the GET parameters `token` and `location` appended. Additionally, the headers `X-User` and `X-Token` are set.
+with the location `/.well-known/dpa-sso/`, and the GET parameters `token` and `location` appended. Additionally, the headers `X-User` and `X-Token` are set.
 The token is unique to the origin, and distinct from the session token. If `renew-token` doesn't contain a valid token *and* there is no known
 session, the login page will be shown and the HTTP status will be 401. If the token is known and valid, the session (optional, if present)
 matches, and the token isn't old, the existing token is returned. Otherwise, a new token is returned, if a session is specified, it is for the

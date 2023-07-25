@@ -7,11 +7,14 @@ require(__DIR__."/sso.php");
 if(!@$_SERVER["HTTPS"])
   die();
 
+if($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD')
+  header("Cache-Control: no-store", true);
+
 $self_origin = 'https://' . $_SERVER['HTTP_HOST'] === ($_SERVER['HTTP_ORIGIN']??null);
 
 $referer_origin=null;
 $referer_location=null;
-$referer = ($self_origin?null:$_SERVER['HTTP_REFERER']) ?? $_REQUEST['referer'] ?? null;
+$referer = ($self_origin?null:$_SERVER['HTTP_REFERER']??null) ?? $_REQUEST['referer'] ?? null;
 if( !$referer
  || !str_starts_with($referer, 'https://')
  ||  str_starts_with($referer, 'https://'.$_SERVER['HTTP_HOST'])
@@ -99,11 +102,11 @@ if(!$login){
   exit();
 }
 
-if(!$token_to_renew)
+if(!@$token_to_renew)
   saveSession();
 
 if($referer && isset($_GET['renew-token'])){
-  $auth = $token_to_renew;
+  $auth = $token_to_renew ?? null;
   if(!$auth){
     $auth = new \sso\Authorization();
     $auth->origin = $referer_origin;
@@ -113,8 +116,17 @@ if($referer && isset($_GET['renew-token'])){
   header("HTTP/1.1 303 See Other");
   header("X-User: ".$login->user);
   header("X-Token: ".$auth->token);
-  header("Location: $referer_origin/sso/?token=".rawurlencode($auth->token)."&location=".rawurlencode($referer_location));
+  header("Cache-Control: no-store", true);
+  header("Location: $referer_origin/.well-known/dpa-sso/?token=".rawurlencode($auth->token)."&location=".rawurlencode($referer_location));
   exit();
 }else{
-  require("main.php");
+  if($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD'){
+    // This will make the browser follow up the request with a get request
+    // This will remove the previous request from the history, if for example, it was the login
+    header("HTTP/1.1 303 See Other");
+    header("Location: #");
+    exit();
+  }else{
+    require("main.php");
+  }
 }

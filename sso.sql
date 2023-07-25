@@ -14,7 +14,7 @@ CREATE OR REPLACE TABLE `session` (
 
 CREATE OR REPLACE TABLE `authorization` (
   `id` INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `origin` VARCHAR(32) NOT NULL,
+  `origin` VARCHAR(128) NOT NULL,
   `token` VARCHAR(64) NOT NULL,
   `session` INT UNSIGNED NOT NULL,
   `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,12 +26,12 @@ CREATE OR REPLACE TABLE `authorization` (
 );
 
 delimiter //
-CREATE TRIGGER `session_update_last_update` BEFORE UPDATE ON `session`
+CREATE OR REPLACE TRIGGER `session_update_last_update` BEFORE UPDATE ON `session`
 FOR EACH ROW
 BEGIN
   SET NEW.`last_update` = CURRENT_TIMESTAMP;
 END;//
-CREATE TRIGGER `authorization_update_last_update` BEFORE UPDATE ON `authorization`
+CREATE OR REPLACE TRIGGER `authorization_update_last_update` BEFORE UPDATE ON `authorization`
 FOR EACH ROW
 BEGIN
   SET NEW.`last_update` = CURRENT_TIMESTAMP;
