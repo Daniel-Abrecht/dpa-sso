@@ -1,0 +1,1 @@
+sso/index.php needs to be set up such that it handles the location /.well-known/dpa-sso/.

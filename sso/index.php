@@ -1,7 +1,13 @@
 <?php
 
+if(isset($_COOKIE['dpa-sso-token'])){
+  header("HTTP/1.1 403 Forbidden");
+  echo "This location isn't supposed to be called with the dpa-sso-token cookie set, because it would allow overriding valid tokens.";
+  exit();
+}
+
 if(@$_GET['token']){
-  setcookie("sso-token", $_GET['token'], [
+  setcookie("dpa-sso-token", $_GET['token'], [
     'expires' => time()+1*60*60,
     'path' => '/',
     'secure' => true,

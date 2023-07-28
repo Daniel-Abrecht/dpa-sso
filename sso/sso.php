@@ -14,9 +14,9 @@ class sso {
   public static function init(){
     $token = null;
 
-    if($_COOKIE['sso-token']??false){
+    if($_COOKIE['dpa-sso-token']??false){
       if(file_get_contents(
-        \sso\config::$portal_url . '?renew-token=' . rawurlencode($_COOKIE['sso-token']),
+        \sso\config::$portal_url . '?renew-token=' . rawurlencode($_COOKIE['dpa-sso-token']),
         false, stream_context_create(['http'=>[
           'method' => "HEAD",
           "header" => "Referer: https://" . $_SERVER["HTTP_HOST"] . "\r\n",
@@ -42,11 +42,20 @@ class sso {
       header_remove("Expires");
       header_remove("E-Tag");
       header("HTTP/1.1 303 See Other");
+      // Remove old token
+      @unset($_COOKIE['dpa-sso-token']);
+      setcookie("dpa-sso-token", '', [
+        'expires' => -1,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'None'
+      ]);
       header("Location: " . \sso\config::$portal_url . '?renew-token&referer=' . rawurlencode(\sso\config::$origin.$_SERVER['REQUEST_URI']));
       exit();
     }
 
-    setcookie("sso-token", $token, [
+    setcookie("dpa-sso-token", $token, [
       'expires' => time()+1*60*60,
       'path' => '/',
       'secure' => true,
