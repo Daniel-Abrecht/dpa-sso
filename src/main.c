@@ -273,7 +273,7 @@ static int preauth_set_token(request_rec* r){
 }
 
 static void register_hooks(apr_pool_t* p){
-  ap_hook_handler(preauth_set_token, 0, 0, APR_HOOK_FIRST);
+  ap_hook_check_access(preauth_set_token, 0, 0, APR_HOOK_FIRST, AP_AUTH_INTERNAL_PER_URI); // Needs to run before authn if both applicable
   ap_hook_check_authn(authenticate_dpa_sso, 0, 0, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
 }
 
