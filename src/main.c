@@ -24,10 +24,16 @@ static inline int cstr_casecmp_z(const char* s1, const char* s2){
 
 module AP_MODULE_DECLARE_DATA auth_dpa_sso_module;
 
+enum fake_basic_auth {
+  FBA_OFF,
+  FBA_USER_ONLY,
+  FBA_USER_PASSWORD
+};
+
 typedef struct {
+  enum fake_basic_auth fakebasicauth;
   apr_uri_t location;
   bool authoritative;
-  bool fakebasicauth;
   bool location_set;
   bool authoritative_set;
   bool fakebasicauth_set;
@@ -62,9 +68,19 @@ static const char* set_authoritative(cmd_parms* cmd, void *config, int flag){
   return 0;
 }
 
-static const char* set_fake_basic_auth(cmd_parms* cmd, void *config, int flag){
+static const char* set_fake_basic_auth(cmd_parms* cmd, void *config, const char* p){
+  enum fake_basic_auth e = FBA_OFF;
+  if(!cstr_casecmp_z("off", p)){
+    e = FBA_OFF;
+  }else if(!cstr_casecmp_z("on", p) || !cstr_casecmp_z("user", p)){
+    e = FBA_USER_ONLY;
+  }else if(!cstr_casecmp_z("user-password", p)){
+    e = FBA_USER_PASSWORD;
+  }else{
+    return "AuthDPASSOFakeBasicAuth: ERROR: Must be one of: Off, On, user, user-password";
+  }
   auth_dpa_sso_config_rec* conf = config;
-  conf->fakebasicauth = flag;
+  conf->fakebasicauth = e;
   conf->fakebasicauth_set = true;
   return 0;
 }
@@ -82,7 +98,7 @@ static const char* set_location(cmd_parms* cmd, void* config, const char* locati
 static const command_rec auth_dpa_sso_cmds[] = {
   AP_INIT_TAKE1("AuthDPASSOLocation"     , set_location       , 0, OR_AUTHCFG, "The location of the SSO Portal"),
   AP_INIT_FLAG ("AuthDPASSOAuthoritative", set_authoritative  , 0, OR_AUTHCFG, "Set to 'Off' to allow access control to be passed along to lower modules if the UserID is not known to this module"),
-  AP_INIT_FLAG ("AuthDPASSOFakeBasicAuth", set_fake_basic_auth, 0, OR_AUTHCFG, "Set to 'On' to pass through authentication to the rest of the server as a basic authentication header. The token will be set instead of the password"),
+  AP_INIT_TAKE1("AuthDPASSOFakeBasicAuth", set_fake_basic_auth, 0, OR_AUTHCFG, "Set to 'On' to pass through authentication to the rest of the server as a basic authentication header. The token will be set instead of the password"),
   {0}
 };
 
@@ -174,6 +190,8 @@ static int authenticate_dpa_sso(request_rec* r){
   if(cstr_casecmp_z(ap_auth_type(r), "dpa-sso"))
     return DECLINED;
 
+  apr_table_unset(r->headers_in, "Authorization");
+
   request_rec* m = r;
   while(m->prev) m = m->prev;
   while(m->main) m = m->main;
@@ -210,7 +228,11 @@ static int authenticate_dpa_sso(request_rec* r){
     return HTTP_SEE_OTHER;
   }else{
     ap_cookie_write(r, "dpa-sso-token", token, cookie_flags, TOKEN_MAX_VALIDITY, r->headers_out, r->err_headers_out, NULL);
-    // TODO: Add fake basic auth header
+    if(conf->fakebasicauth){
+      char* basic = conf->fakebasicauth != FBA_USER_PASSWORD ? r->user : apr_pstrcat(r->pool, r->user, ":", token, NULL);
+      char* base64 = ap_pbase64encode(r->pool, basic);
+      apr_table_setn(r->headers_in, "Authorization", apr_pstrcat(r->pool, "Basic ", base64, NULL));
+    }
     return OK;
   }
 }
@@ -251,8 +273,8 @@ static int preauth_set_token(request_rec* r){
 }
 
 static void register_hooks(apr_pool_t* p){
-  ap_hook_check_authn(authenticate_dpa_sso, 0, 0, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
   ap_hook_handler(preauth_set_token, 0, 0, APR_HOOK_FIRST);
+  ap_hook_check_authn(authenticate_dpa_sso, 0, 0, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
 }
 
 AP_DECLARE_MODULE(auth_dpa_sso) = {
