@@ -28,6 +28,11 @@ The usecase for *permission token* is to allow a webbapplication to access other
 Suppose a user logged in at the SSO portal, and the application got a *token* using which the user is logged in, let's suppose it is `0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`.
 Now, the web mail application may need to access the mail server (smtp and/or imap service). So it will generate a mail permission, it'd be `mail/621b3996e0bee6fd91bc154abbd69a16a695310826efdb5b014489cb9937c143`.
 The mail server / it's smtp / imap applications, can then be configured to accept the username and that *permission token*, and use the `/permission/` endpoint to validate it.
-See the `libpam-dpa-sso` branch for an example to configure postfix and dovecot to do so using pam.
+See the `libpam-dpa-sso` branch for an example to configure postfix and dovecot to do so using pam. The config file of this portal would have to contain an entry like the following:
+```
+\sso\config::$permission_map = [
+  "https://mail.example.com" => ["mail"],
+];
+```
 
 See also the other branches, there is an apache2 httpd auth module at the `libapache2-mod-auth-dpa-sso`. There is also a PHP counterpart at `sso-middleware-php`.
