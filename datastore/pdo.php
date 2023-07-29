@@ -62,7 +62,7 @@ class PDO implements \sso\DataStore {
     $rs = $sth->fetchAll();
     foreach($rs as &$r)
       $r = self::convertAuthorization($r);
-    return $r;
+    return $rs;
   }
   function loadAuthorization(string $origin, string $token) : ?\sso\Authorization {
     $sth = $this->pdo->prepare("SELECT `origin`, `token`, `session_token`, `created`, `last_update`, `valid_for`, `stale` FROM `valid_authorization` WHERE `origin`=:origin AND `token`=:token LIMIT 1");

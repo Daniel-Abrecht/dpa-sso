@@ -1,19 +1,19 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set("display_errors", 1);
 
 require(__DIR__."/sso.php");
 
-if(!@$_SERVER["HTTPS"])
+if(!@$_SERVER["HTTPS"]){
+  header("HTTP/1.1 400 Bad Request");
   die();
+}
 
 if($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD')
   header("Cache-Control: no-store", true);
 
 $self_origin = 'https://' . $_SERVER['HTTP_HOST'] === ($_SERVER['HTTP_ORIGIN']??null);
 
-$referer_origin=null;
-$referer_location=null;
+$referer_origin = null;
+$referer_location = null;
 $referer = ($self_origin?null:$_SERVER['HTTP_REFERER']??null) ?? $_REQUEST['referer'] ?? null;
 if( !$referer
  || !str_starts_with($referer, 'https://')

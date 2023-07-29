@@ -40,6 +40,7 @@ class config {
   public static DataStore $datastore;
   public static PasswordStore $passwordstore;
   public static string $token_whitelist_pattern = '/^https:\/\/.*/';
+  public static array $permission_map = []; /* [ "origin" => ["permission"] ] */
 }
 
 function create_token(){

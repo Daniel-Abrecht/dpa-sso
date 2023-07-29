@@ -3,7 +3,7 @@
 require(__DIR__."/config.php");
 
 class sso {
-  public static function load(string $type, string ...$id){
+  public static function load(string $type, ...$id){
     switch($type){
       case 'Session':
       case 'sso\Session':
@@ -32,6 +32,9 @@ class sso {
   }
   public static function loadSessionOfUser(string $user) : array {
     return \sso\config::$datastore->loadSessionOfUser($user);
+  }
+  public static function loadAuthorizationOfSession(\sso\Session|string $session) : array {
+    return \sso\config::$datastore->loadAuthorizationOfSession($session);
   }
   public static function logout(string $user) : void {
     \sso\config::$datastore->deleteSessionOfUser($user);
