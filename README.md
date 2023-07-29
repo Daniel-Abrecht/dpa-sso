@@ -24,7 +24,7 @@ A *permission token* can (currently) not be used in places where a regular *toke
 Which origins are allowed to generate *permission tokens* for which origin needs to be specified in the config. While generating them is always possible,
 this endpoint will check the origin and treat them as invalid otherwise.
 
-The usecase for *permission token* is to allow a webbapplication to access other applications. Suppose there was a web mail application at origin "https://mail.example.com".
+The usecase for *permission token* is to allow a webbapplication to access other applications. Suppose there was a web mail application at origin `https://mail.example.com`.
 Suppose a user logged in at the SSO portal, and the application got a *token* using which the user is logged in, let's suppose it is `0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`.
 Now, the web mail application may need to access the mail server (smtp and/or imap service). So it will generate a mail permission, it'd be `mail/621b3996e0bee6fd91bc154abbd69a16a695310826efdb5b014489cb9937c143`.
 The mail server / it's smtp / imap applications, can then be configured to accept the username and that *permission token*, and use the `/permission/` endpoint to validate it.
