@@ -14,7 +14,7 @@ $self_origin = 'https://' . $_SERVER['HTTP_HOST'] === ($_SERVER['HTTP_ORIGIN']??
 
 $referer_origin = null;
 $referer_location = null;
-$referer = ($self_origin?null:$_SERVER['HTTP_REFERER']??null) ?? $_REQUEST['referer'] ?? null;
+$referer = $_REQUEST['referer'] ?? null;
 if( !$referer
  || !str_starts_with($referer, 'https://')
  ||  str_starts_with($referer, 'https://'.$_SERVER['HTTP_HOST'])
