@@ -1,8 +1,5 @@
 <?php
 
- error_reporting(E_ALL);
- ini_set("display_errors", 1);
-
 require(__DIR__."/../sso.php");
 
 if(!@$_SERVER["HTTPS"]){
@@ -10,17 +7,18 @@ if(!@$_SERVER["HTTPS"]){
   die();
 }
 
-$user = $_GET['user'] ?? null;
-@list($permission, $token) = explode('/', $_GET['token']??'', 2);
+$user = $_POST['user'] ?? null;
+$perms = explode(' ', $_POST['token']??'');
+$token = array_pop($perms);
 
-if(!$user || !$permission || !$token){
+if(!$user || !$perms || !$token){
   header("HTTP/1.1 400 Bad Request");
   die();
 }
 
 $allowed_origins = [];
 foreach(\sso\config::$permission_map as $origin => $permissions)
-  if(in_array($permission, $permissions, true))
+  if(array_intersect($perms, $permissions))
     $allowed_origins[] = $origin;
 
 $authorization = null;
@@ -28,7 +26,7 @@ foreach(\sso::loadSessionOfUser($user) as $session)
 foreach(\sso::loadAuthorizationOfSession($session) as $auth){
   if(!in_array($auth->origin, $allowed_origins, true))
     continue;
-  if($token !== hash('sha256', 'mail '.$auth->token))
+  if($token !== hash('sha256', implode(' ',$perms).' '.$auth->token))
     continue;
   $authorization = $auth;
   break 2;
@@ -42,10 +40,18 @@ if(!$authorization){
   die();
 }
 
-echo JSON_encode([
+$permissions = array_intersect($perms, \sso\config::$permission_map[$authorization->origin]);
+$data = [
   'origin' => $authorization->origin,
   'user' => $user,
-  'permission' => $permission,
-  'created' => $authorization->created->format(DateTime::ATOM),
-  'last_update' => $authorization->last_update->format(DateTime::ATOM),
-]);
+  'permission' => $permissions,
+  'token' => implode(' ',$permissions).' '.hash('sha256', implode(' ',$permissions).' '.$authorization->token),
+];
+
+foreach($data as $key => $value){
+  if(is_array($value))
+    $value = implode(" ", $value);
+  header('X-'.str_replace('_','-',ucfirst($key)).': '.($value??''));
+}
+
+echo JSON_encode($data);

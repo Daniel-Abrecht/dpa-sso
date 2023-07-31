@@ -17,22 +17,23 @@ matches, and the token isn't old, the existing token is returned. Otherwise, a n
 specified session, otherwise, it is for the same session as the old token. `Referer` can be overwritten using a get parameter named "referer".
 
 There is also the `/permission/` endpoint. Given a *token*, a new *permission token* can be generated, that can be checked using this endpoint.
-The new *permission token* starts with the permission name followed by a `/`, followed by the sha256 of the permission name followed by a space and the token.
-The token can be checked by passing it to the `/permission/` endpoint using the `token` GET parameter. The user also needs to be passed using the `user` GET parameter.
+The new *permission token* starts with a list of permissions followed by the sha256 of the permission list and the *token*. Everything is seperated by a single space.
+The token can be checked by passing it to the `/permission/` endpoint using the `token` POST parameter. The user also needs to be passed using the `user` POST parameter.
 That is mainly so only the tokens of that user need to be checked if they were used to generate the permission token. The `/permission/` returns a JSON
 containing the `origin` of the token and some other infos if it is valid. It returns null and status 403 otherwise. This endpoint does not require authentification.
 A *permission token* can (currently) not be used in places where a regular *token* can be used.  
-Which origins are allowed to generate *permission tokens* for which origin needs to be specified in the config. While generating them is always possible,
-this endpoint will check the origin and treat them as invalid otherwise.
+Which origins can have which permissions needs to be specified in the config. While generating *permission tokens* is always possible, it will return a json
+containing with a `permission` field, which contains the subset of allowed permissions. If there are none, the token is treated like an invalid token.
+The fields are also returned as HTTP Headers, prefixed with `X-`.
 
 The usecase for *permission token* is to allow a webbapplication to access other applications. Suppose there was a web mail application at origin `https://mail.example.com`.
-Suppose a user logged in at the SSO portal, and the application got a *token* using which the user is logged in, let's suppose it is `0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`.
-Now, the web mail application may need to access the mail server (smtp and/or imap service). So it will generate a mail permission, it'd be `mail/621b3996e0bee6fd91bc154abbd69a16a695310826efdb5b014489cb9937c143`.
+Suppose a user logged in at the SSO portal, and the application got a *token* using which the user is logged in, let's suppose it is `abc123`.
+Now, the web mail application may need to access the mail server (smtp and/or imap service). So it will generate a permission, for example `smtp imap 7609517ee082128699fa209eeaa058203e600371071bcad14594036b491fa51a`.
 The mail server / it's smtp / imap applications, can then be configured to accept the username and that *permission token*, and use the `/permission/` endpoint to validate it.
 See the `libpam-dpa-sso` branch for an example to configure postfix and dovecot to do so using pam. The config file of this portal would have to contain an entry like the following:
 ```
 \sso\config::$permission_map = [
-  "https://mail.example.com" => ["mail"],
+  "https://mail.example.com" => ["smtp","imap"],
 ];
 ```
 

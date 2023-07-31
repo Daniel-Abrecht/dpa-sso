@@ -117,7 +117,9 @@ if($referer && isset($_GET['renew-token'])){
   header("X-User: ".$login->user);
   header("X-Token: ".$auth->token);
   header("Cache-Control: no-store", true);
+  header("Content-Type: application/json", true);
   header("Location: $referer_origin/.well-known/dpa-sso/?token=".rawurlencode($auth->token)."&location=".rawurlencode($referer_location));
+  echo JSON_encode(['user'=>$login->user]);
   exit();
 }else{
   if($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD'){
