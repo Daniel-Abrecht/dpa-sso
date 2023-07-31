@@ -49,9 +49,13 @@ $data = [
 ];
 
 foreach($data as $key => $value){
-  if(is_array($value))
-    $value = implode(" ", $value);
-  header('X-'.str_replace('_','-',ucfirst($key)).': '.($value??''));
+  $k = 'X-'.str_replace('_','-',ucfirst($key)).': ';
+  if(is_array($value)){
+    foreach($value as $v)
+      header($k.($v??''), false);
+  }else{
+    header($k.($value??''));
+  }
 }
 
 echo JSON_encode($data);
