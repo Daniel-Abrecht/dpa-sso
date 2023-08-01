@@ -128,44 +128,60 @@ static char* construct_referer(apr_pool_t* p, const char* uri, request_rec* r){
 }
 
 struct check_token_result {
-  char* user;
-  char* token;
+  const char* user;
+  const char* token;
 };
 
 enum e_check_token_result {
-  CT_INVALID,
   CT_FAILED,
-  CT_VALID
+  CT_INVALID,
+  CT_VALID,
 };
 
+size_t noop_cb(void* ptr, size_t size, size_t nmemb, void* data){
+  (void)ptr;
+  (void)data;
+  return size * nmemb;
+}
+
 static enum e_check_token_result check_token(
+  request_rec* m,
   request_rec* r,
   apr_uri_t renew_token_url,
-  const char* token,
   struct check_token_result* result
 ){
   enum e_check_token_result res = CT_FAILED;
   result->user = 0;
   result->token = 0;
 
-  request_rec* m = r;
-  while(m->prev) m = m->prev;
-  while(m->main) m = m->main;
+  const char* presult = apr_table_get(m->notes, "dpa-sso-result");
+  if(presult){
+    enum e_check_token_result res = *presult;
+    if(res != CT_VALID)
+      return res;
+    result->token = apr_table_get(m->notes, "dpa-sso-token");
+    result->user = apr_table_get(m->notes, "dpa-sso-user");
+    return CT_VALID;
+  }
+
+  const char* token = 0;
+  ap_cookie_read(r, "dpa-sso-token", &token, true);
+  if(!token || !token[0])
+    return CT_INVALID;
 
   // TODO: allow overriding the origin / basepath, or maybe allow to take the original URL from some header or something
   const char* referer = apr_pescape_urlencoded(r->pool, construct_referer(r->pool, "", m));
   renew_token_url.query = renew_token_url.query
                         ? apr_pstrcat(r->pool, renew_token_url.query, "&renew-token=", token, "&referer=", referer, NULL)
                         : apr_pstrcat(r->pool, "renew-token=", token, "&referer=", referer, NULL);
-  const char *url = apr_uri_unparse(r->pool, &renew_token_url, APR_URI_UNP_REVEALPASSWORD);
+  const char* url = apr_uri_unparse(r->pool, &renew_token_url, APR_URI_UNP_REVEALPASSWORD);
 
   curl_global_init(CURL_GLOBAL_ALL);
-  struct curl_slist* headers = 0;
   CURL* ctx = curl_easy_init();
-  curl_easy_setopt(ctx, CURLOPT_HTTPHEADER, headers);
   curl_easy_setopt(ctx, CURLOPT_NOBODY, 1);
   curl_easy_setopt(ctx, CURLOPT_URL, url);
   curl_easy_setopt(ctx, CURLOPT_NOPROGRESS, 1);
+  curl_easy_setopt(ctx, CURLOPT_WRITEFUNCTION, noop_cb);
 
   if(curl_easy_perform(ctx))
     goto error;
@@ -181,14 +197,14 @@ static enum e_check_token_result check_token(
   curl_easy_header(ctx, "X-User", 0, CURLH_HEADER, -1, &huser);
   if(!huser || !huser->value || !huser->value[0])
     goto error;
-  result->user = apr_pstrdup(r->pool, huser->value);
+  result->user = apr_pstrdup(m->pool, huser->value);
   struct curl_header* htoken = 0;
   curl_easy_header(ctx, "X-Token", 0, CURLH_HEADER, -1, &htoken);
   if(!htoken || !htoken->value || !htoken->value[0]){
     result->user = 0;
     goto error;
   }
-  result->token = apr_pstrdup(r->pool, htoken->value);
+  result->token = apr_pstrdup(m->pool, htoken->value);
 
   curl_easy_cleanup(ctx);
   return CT_VALID;
@@ -206,49 +222,58 @@ static int authenticate_dpa_sso(request_rec* r){
 
   apr_table_unset(r->headers_in, "Authorization");
 
+  /*
+    * XSS security warning: using cookies to store private data only works
+    * when the administrator has full control over the source website. When
+    * in forward-proxy mode, websites are public by definition, and so can
+    * never be secure. Abort the auth attempt in this case.
+    */
+  if(PROXYREQ_PROXY == r->proxyreq){
+    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, APLOGNO(01809) "dpa-sso auth cannot be used for proxy requests due to XSS risk, access denied: %s", r->uri);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
   request_rec* m = r;
   while(m->prev) m = m->prev;
   while(m->main) m = m->main;
 
-  const char* token = 0;
-  ap_cookie_read(r, "dpa-sso-token", &token, true);
-  if(token){
-    struct check_token_result result;
-    enum e_check_token_result ret = check_token(r, conf->location, token, &result);
-    token = 0;
-    if(ret == CT_FAILED){
-      apr_table_addn(r->headers_out, "Cache-Control", "no-store");
-      apr_table_addn(r->err_headers_out, "Cache-Control", "no-store");
-      ap_cookie_remove(r, "dpa-sso-token", cookie_flags, r->headers_out, r->err_headers_out, NULL);
-      return HTTP_INTERNAL_SERVER_ERROR;
-    }
-    if(ret == CT_VALID){
-      token = result.token; // Note: the token may have changed
-      r->user = result.user;
-    }
-  }
+  struct check_token_result result;
+  enum e_check_token_result ret = check_token(m, r, conf->location, &result);
 
-  if(!token){
-    // TODO: allow overriding the origin
-    const char* referer = apr_pescape_urlencoded(r->pool, construct_referer(r->pool, m->unparsed_uri, m));
-    apr_uri_t renew_token_url = conf->location;
-    renew_token_url.query = renew_token_url.query
-                          ? apr_pstrcat(r->pool, renew_token_url.query, "&renew-token&referer=", referer, NULL)
-                          : apr_pstrcat(r->pool, "renew-token&referer=", referer, NULL);
+  apr_table_set(m->notes, "dpa-sso-result", (char[]){ret,0});
+
+  if(ret == CT_FAILED){
     apr_table_addn(r->headers_out, "Cache-Control", "no-store");
     apr_table_addn(r->err_headers_out, "Cache-Control", "no-store");
     ap_cookie_remove(r, "dpa-sso-token", cookie_flags, r->headers_out, r->err_headers_out, NULL);
-    apr_table_set(r->headers_out, "Location", apr_uri_unparse(r->pool, &renew_token_url, APR_URI_UNP_REVEALPASSWORD));
-    return HTTP_SEE_OTHER;
-  }else{
-    ap_cookie_write(r, "dpa-sso-token", token, cookie_flags, TOKEN_MAX_VALIDITY, r->headers_out, r->err_headers_out, NULL);
+    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, APLOGNO(91001) "dpa-sso: Checking token with SSO-Portal failed");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  if(ret == CT_VALID){
+    apr_table_setn(m->notes, "dpa-sso-user", result.user);
+    apr_table_setn(m->notes, "dpa-sso-token", result.token);
+    r->user = (char*)result.user;
+    ap_cookie_write(r, "dpa-sso-token", result.token, cookie_flags, TOKEN_MAX_VALIDITY, r->headers_out, r->err_headers_out, NULL);
     if(conf->fakebasicauth){
-      char* basic = conf->fakebasicauth != FBA_USER_PASSWORD ? r->user : apr_pstrcat(r->pool, r->user, ":", token, NULL);
+      char* basic = conf->fakebasicauth != FBA_USER_PASSWORD ? r->user : apr_pstrcat(r->pool, r->user, ":", result.token, NULL);
       char* base64 = ap_pbase64encode(r->pool, basic);
       apr_table_setn(r->headers_in, "Authorization", apr_pstrcat(r->pool, "Basic ", base64, NULL));
     }
     return OK;
   }
+
+  // TODO: allow overriding the origin
+  const char* referer = apr_pescape_urlencoded(r->pool, construct_referer(r->pool, m->unparsed_uri, m));
+  apr_uri_t renew_token_url = conf->location;
+  renew_token_url.query = renew_token_url.query
+                        ? apr_pstrcat(r->pool, renew_token_url.query, "&renew-token&referer=", referer, NULL)
+                        : apr_pstrcat(r->pool, "renew-token&referer=", referer, NULL);
+  apr_table_addn(r->headers_out, "Cache-Control", "no-store");
+  apr_table_addn(r->err_headers_out, "Cache-Control", "no-store");
+  ap_cookie_remove(r, "dpa-sso-token", cookie_flags, r->headers_out, r->err_headers_out, NULL);
+  apr_table_set(r->headers_out, "Location", apr_uri_unparse(r->pool, &renew_token_url, APR_URI_UNP_REVEALPASSWORD));
+  return HTTP_SEE_OTHER;
 }
 
 static int preauth_set_token(request_rec* r){
