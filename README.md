@@ -3,7 +3,7 @@
 This is a pam auth module for verifying a permission token derived from a token from the dpa-sso portal.
 You have to specify the location of the permission endpoint of the dpa-sso portal, and a colon separated list of permissions.
 
-# Example, how to configure smtp & imap login for dovecot and postfix
+# How to configure smtp & imap login for dovecot and postfix
 
 When authenticating over imap, dovecot presents itself to pam as imap service, thus the config file is `/etc/pam.d/imap`.
 For postfix over smtp, it's smtp, and the config file is `/etc/pam.d/smtp`.
