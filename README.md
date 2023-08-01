@@ -36,5 +36,14 @@ See the `libpam-dpa-sso` branch for an example to configure postfix and dovecot 
   "https://mail.example.com" => ["smtp","imap"],
 ];
 ```
+For completeness sake, here is what a roundcube webmail config should contain:
+```
+$config['smtp_user'] = '%u';
+$config['smtp_pass'] = '%p';
+$_SERVER['PHP_AUTH_PW'] = 'smtp imap '.hash('sha256', 'smtp imap '.$_SERVER['PHP_AUTH_PW']);
+$config['plugins'] = ['http_authentication'];
+```
+Note, that is when using the `libapache2-mod-auth-dpa-sso` httpd module, with the `AuthDPASSOFakeBasicAuth` set to `user-password`.
+It can also be set up using `sso-middleware-php` instead, but this currently isn't documented.
 
 See also the other branches, there is an apache2 httpd auth module at the `libapache2-mod-auth-dpa-sso`. There is also a PHP counterpart at `sso-middleware-php`.
