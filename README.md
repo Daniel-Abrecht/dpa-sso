@@ -34,4 +34,4 @@ auth sufficient pam_dpa-sso.so url=https://sso.abrecht.li/permission/ permission
 @include common-password
 @include common-session
 ```
-But how it should look like on your servcer will depend on your distribution and preferences.
+But how it should look like on your server will depend on your distribution and preferences.
