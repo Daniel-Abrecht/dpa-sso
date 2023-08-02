@@ -37,7 +37,7 @@ function saveSession(){
     $login->user_agent = @$_SERVER['HTTP_USER_AGENT'];
   \sso::save($login);
   setcookie("sso-session", $login->token, [
-    'expires' => time()+2*24*60*60,
+    'expires' => time()+7*24*60*60,
     'path' => '/',
     'secure' => true,
     'httponly' => true,
