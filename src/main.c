@@ -170,10 +170,7 @@ static enum e_check_token_result check_token(
     return CT_INVALID;
 
   // TODO: allow overriding the origin / basepath, or maybe allow to take the original URL from some header or something
-  const char* referer = apr_pescape_urlencoded(r->pool, construct_referer(r->pool, "", m));
-  renew_token_url.query = renew_token_url.query
-                        ? apr_pstrcat(r->pool, renew_token_url.query, "&renew-token=", token, "&referer=", referer, NULL)
-                        : apr_pstrcat(r->pool, "renew-token=", token, "&referer=", referer, NULL);
+  const char* referer = construct_referer(r->pool, "", m);
   const char* url = apr_uri_unparse(r->pool, &renew_token_url, APR_URI_UNP_REVEALPASSWORD);
 
   curl_global_init(CURL_GLOBAL_ALL);
@@ -182,6 +179,15 @@ static enum e_check_token_result check_token(
   curl_easy_setopt(ctx, CURLOPT_URL, url);
   curl_easy_setopt(ctx, CURLOPT_NOPROGRESS, 1);
   curl_easy_setopt(ctx, CURLOPT_WRITEFUNCTION, noop_cb);
+
+  curl_mime* multipart = curl_mime_init(ctx);
+  curl_mimepart* part = curl_mime_addpart(multipart);
+  curl_mime_name(part, "renew-token");
+  curl_mime_data(part, token, CURL_ZERO_TERMINATED);
+  part = curl_mime_addpart(multipart);
+  curl_mime_name(part, "referer");
+  curl_mime_data(part, referer, CURL_ZERO_TERMINATED);
+  curl_easy_setopt(ctx, CURLOPT_MIMEPOST, multipart);
 
   if(curl_easy_perform(ctx))
     goto error;
