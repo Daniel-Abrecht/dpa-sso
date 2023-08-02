@@ -7,7 +7,7 @@ In the `config.php` file, you can configure where and how to save sessions, and 
 If the portal is opened normally, you can log in, check the sessions, log out of the current session, log out all your sessions,
 and change your password.
 
-If the page is opened with the `renew-token` GET parameter set, and the `referer` GET or POST parameter is also set, a token will be checked,
+If the page is opened with the `renew-token` GET or POST parameter set, and the `referer` GET or POST parameter is also set, a token will be checked,
 created, or renewed, and the existing or a new token is sent back, to the URL origin derived from the `referer`, with the location `/.well-known/dpa-sso/`,
 and the GET parameters `token` and `location` appended. Additionally, the headers `X-User` and `X-Token` are set. The HTTP `Referer` header
 was used initially, but prooved unreliable.  

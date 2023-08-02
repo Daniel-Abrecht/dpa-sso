@@ -26,7 +26,8 @@ if($referer_origin){
    $referer_origin = $referer_origin[1];
 }
 
-if(isset($_GET['renew-token']) && !$referer)
+$renew_token = $_REQUEST['renew-token'] ?? null;
+if($renew_token !== null && !$referer)
   die("Missing HTTP referer");
 
 $login = null;
@@ -48,8 +49,8 @@ function saveSession(){
 if(isset($_COOKIE['sso-session']))
   $login = \sso::load(\sso\Session::class, $_COOKIE['sso-session']);
 
-if(isset($_GET['renew-token']) && $_GET['renew-token']){
-  $token_to_renew = \sso::load(\sso\Authorization::class, $referer_origin, $_GET['renew-token']);
+if($renew_token !== null){
+  $token_to_renew = \sso::load(\sso\Authorization::class, $referer_origin, $renew_token);
   if($token_to_renew && $login && $token_to_renew->session != $login->token)
     $token_to_renew = null;
   if($token_to_renew && !$login)
@@ -105,7 +106,7 @@ if(!$login){
 if(!@$token_to_renew)
   saveSession();
 
-if($referer && isset($_GET['renew-token'])){
+if($referer && $renew_token !== null){
   $auth = $token_to_renew ?? null;
   if(!$auth){
     $auth = new \sso\Authorization();
@@ -128,7 +129,7 @@ if($referer && isset($_GET['renew-token'])){
     header("HTTP/1.1 303 See Other");
     header("Location: #");
     exit();
-  }else{
+  }else if($_SERVER['REQUEST_METHOD'] !== 'HEAD'){
     require("main.php");
   }
 }
