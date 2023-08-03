@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg viewBox="0 0 640 950" xmlns="http://www.w3.org/2000/svg" xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs_block">
+    <filter height="1.504" id="filter_blur" inkspace:collect="always" width="1.1575" x="-0.07875" y="-0.252">
+      <feGaussianBlur id="feGaussianBlur3780" inkspace:collect="always" stdDeviation="4.2" />
+    </filter>
+  </defs>
+  <title>blockdiag</title>
+  <desc>diagram {
+  browser -&gt; appserver [label = "GET /any/path"];
+  browser &lt;- appserver [label = "HTTP 303, Location: https://sso.example.com/?renew-token"];
+  browser -&gt; ssoportal [label = "GET /?renew-token&amp;location=https://app.example.com/any/path, [Cookie: sso-session=&lt;sessiontoken&gt;]?"];
+  browser &lt;- ssoportal [label = "HTTP 303, Location: https://app.example.com/.well-known/dpa-sso/?token=&lt;token&gt;&amp;location=/any/path"];
+  browser -&gt; appserver [label = "GET https://app.example.com/.well-known/dpa-sso/?token=&lt;token&gt;&amp;location=/any/path"];
+  browser &lt;- appserver [label = "HTTP 303, Location: /any/path, Set-Cookie: dpa-sso-token=&lt;token&gt;"];
+  browser -&gt; appserver [label = "GET /any/path, Cookie: dpa-sso-token=&lt;token&gt;"];
+             appserver -&gt; ssoportal [label = "POST /, renew-token=&lt;token&gt;, location=https://app.example.com"];
+             appserver &lt;- ssoportal [label = "HTTP 303, token was valid"];
+  browser &lt;- appserver [label = "HTTP 200"];
+}
+</desc>
+  <rect fill="rgb(0,0,0)" height="787" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="127" y="141" />
+  <rect fill="rgb(0,0,0)" height="91" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="141" />
+  <rect fill="rgb(0,0,0)" height="91" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="492" />
+  <rect fill="rgb(0,0,0)" height="221" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="661" />
+  <rect fill="rgb(0,0,0)" height="78" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="511" y="310" />
+  <rect fill="rgb(0,0,0)" height="65" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="511" y="752" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="67" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="259" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="451" y="46" />
+  <path d="M 128 80 L 128 938" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="787" stroke="rgb(0,0,0)" width="8" x="124" y="135" />
+  <path d="M 320 80 L 320 938" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="91" stroke="rgb(0,0,0)" width="8" x="316" y="135" />
+  <rect fill="moccasin" height="91" stroke="rgb(0,0,0)" width="8" x="316" y="486" />
+  <rect fill="moccasin" height="221" stroke="rgb(0,0,0)" width="8" x="316" y="655" />
+  <path d="M 512 80 L 512 938" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="78" stroke="rgb(0,0,0)" width="8" x="508" y="304" />
+  <rect fill="moccasin" height="65" stroke="rgb(0,0,0)" width="8" x="508" y="746" />
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="64" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="42" x="128.0" y="66">browser</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="256" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="54" x="320.0" y="66">appserver</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="448" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="54" x="512.0" y="66">ssoportal</text>
+  <path d="M 136 135 L 312 135" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,131 312,135 304,139" stroke="rgb(0,0,0)" />
+  <path d="M 136 226 L 312 226" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,222 136,226 144,230" stroke="rgb(0,0,0)" />
+  <path d="M 136 304 L 504 304" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="496,300 504,304 496,308" stroke="rgb(0,0,0)" />
+  <path d="M 136 382 L 504 382" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,378 136,382 144,386" stroke="rgb(0,0,0)" />
+  <path d="M 136 486 L 312 486" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,482 312,486 304,490" stroke="rgb(0,0,0)" />
+  <path d="M 136 577 L 312 577" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,573 136,577 144,581" stroke="rgb(0,0,0)" />
+  <path d="M 136 655 L 312 655" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,651 312,655 304,659" stroke="rgb(0,0,0)" />
+  <path d="M 328 746 L 504 746" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="496,742 504,746 496,750" stroke="rgb(0,0,0)" />
+  <path d="M 328 811 L 504 811" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="336,807 328,811 336,815" stroke="rgb(0,0,0)" />
+  <path d="M 136 876 L 312 876" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,872 136,876 144,880" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="78" x="179.0" y="133">GET /any/path</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="228.0" y="205">HTTP 303, Location: https://</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="228.0" y="218">sso.example.com/?renew-token</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="360" x="320.0" y="289">GET /?renew-token&amp;location=https://app.example.com/any/path,</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="228" x="254.0" y="302"> [Cookie: sso-session=&lt;sessiontoken&gt;]?</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="360" x="324.0" y="367">HTTP 303, Location: https://app.example.com/.well-known/dpa-</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="222" x="393.0" y="380">sso/?token=&lt;token&gt;&amp;location=/any/path</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="224.0" y="452">GET https://app.example.com/</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="224.0" y="465">.well-known/dpa-sso/?token=&lt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="150" x="215.0" y="478">token&gt;&amp;location=/any/path</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="228.0" y="549">HTTP 303, Location: /any/pat</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="228.0" y="562">h, Set-Cookie: dpa-sso-token</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="48" x="288.0" y="575">=&lt;token&gt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="224.0" y="640">GET /any/path, Cookie: dpa-s</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="96" x="188.0" y="653">so-token=&lt;token&gt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="416.0" y="718">POST /, renew-token=&lt;token&gt;,</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="416.0" y="731"> location=https://app.exampl</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="30" x="347.0" y="744">e.com</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="150" x="429.0" y="809">HTTP 303, token was valid</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="48" x="288.0" y="874">HTTP 200</text>
+</svg>

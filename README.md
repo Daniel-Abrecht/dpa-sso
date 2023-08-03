@@ -7,6 +7,8 @@ In the `config.php` file, you can configure where and how to save sessions, and 
 If the portal is opened normally, you can log in, check the sessions, log out of the current session, log out all your sessions,
 and change your password.
 
+# Getting & renewing tokens
+
 If the page is opened with the `renew-token` GET or POST parameter set, and the `referer` GET or POST parameter is also set, a token will be checked,
 created, or renewed, and the existing or a new token is sent back, to the URL origin derived from the `referer`, with the location `/.well-known/dpa-sso/`,
 and the GET parameters `token` and `location` appended. Additionally, the headers `X-User` and `X-Token` are set. The HTTP `Referer` header
@@ -15,6 +17,10 @@ The token is unique to the origin, and distinct from the session token. If `rene
 session, the login page will be shown and the HTTP status will be 401. If the token is known and valid, the session (optional, if present)
 matches, and the token isn't old, the existing token is returned. Otherwise, a new token is returned, if a session is specified, it is for the
 specified session, otherwise, it is for the same session as the old token. `Referer` can be overwritten using a get parameter named "referer".
+
+![](token.svg)
+
+# Constructing and checking a permission token
 
 There is also the `/permission/` endpoint. Given a *token*, a new *permission token* can be generated, that can be checked using this endpoint.
 The new *permission token* starts with a list of permissions followed by the sha256 of the permission list and the *token*. Everything is seperated by a single space.
@@ -25,6 +31,8 @@ A *permission token* can (currently) not be used in places where a regular *toke
 Which origins can have which permissions needs to be specified in the config. While generating *permission tokens* is always possible, it will return a json
 containing with a `permission` field, which contains the subset of allowed permissions. If there are none, the token is treated like an invalid token.
 The fields are also returned as HTTP Headers, prefixed with `X-`.
+
+## Example
 
 The usecase for *permission token* is to allow a webbapplication to access other applications. Suppose there was a web mail application at origin `https://mail.example.com`.
 Suppose a user logged in at the SSO portal, and the application got a *token* using which the user is logged in, let's suppose it is `abc123`.
@@ -45,5 +53,7 @@ $config['plugins'] = ['http_authentication'];
 ```
 Note, that is when using the `libapache2-mod-auth-dpa-sso` httpd module, with the `AuthDPASSOFakeBasicAuth` set to `user-password`.
 It can also be set up using `sso-middleware-php` instead, but this currently isn't documented.
+
+# Other things
 
 See also the other branches, there is an apache2 httpd auth module at the `libapache2-mod-auth-dpa-sso`. There is also a PHP counterpart at `sso-middleware-php`.
