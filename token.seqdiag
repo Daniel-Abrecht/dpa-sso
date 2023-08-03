@@ -7,6 +7,6 @@ diagram {
   browser <- appserver [label = "HTTP 303, Location: /any/path, Set-Cookie: dpa-sso-token=<token>"];
   browser -> appserver [label = "GET /any/path, Cookie: dpa-sso-token=<token>"];
              appserver -> ssoportal [label = "POST /, renew-token=<token>, referer=https://app.example.com"];
-             appserver <- ssoportal [label = "HTTP 303, token was valid"];
-  browser <- appserver [label = "HTTP 200"];
+             appserver <- ssoportal [label = "HTTP 303, X-Token: <maybenewtoken>, X-User: <username>"];
+  browser <- appserver [label = "HTTP 200, Set-Cookie: dpa-sso-token=<maybenewtoken>"];
 }
