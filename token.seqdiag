@@ -1,12 +1,12 @@
 diagram {
   browser -> appserver [label = "GET /any/path"];
   browser <- appserver [label = "HTTP 303, Location: https://sso.example.com/?renew-token"];
-  browser -> ssoportal [label = "GET /?renew-token&location=https://app.example.com/any/path, [Cookie: sso-session=<sessiontoken>]?"];
+  browser -> ssoportal [label = "GET /?renew-token&referer=https://app.example.com/any/path, [Cookie: sso-session=<sessiontoken>]?"];
   browser <- ssoportal [label = "HTTP 303, Location: https://app.example.com/.well-known/dpa-sso/?token=<token>&location=/any/path"];
   browser -> appserver [label = "GET https://app.example.com/.well-known/dpa-sso/?token=<token>&location=/any/path"];
   browser <- appserver [label = "HTTP 303, Location: /any/path, Set-Cookie: dpa-sso-token=<token>"];
   browser -> appserver [label = "GET /any/path, Cookie: dpa-sso-token=<token>"];
-             appserver -> ssoportal [label = "POST /, renew-token=<token>, location=https://app.example.com"];
+             appserver -> ssoportal [label = "POST /, renew-token=<token>, referer=https://app.example.com"];
              appserver <- ssoportal [label = "HTTP 303, token was valid"];
   browser <- appserver [label = "HTTP 200"];
 }
