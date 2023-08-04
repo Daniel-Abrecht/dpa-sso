@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg viewBox="0 0 832 654" xmlns="http://www.w3.org/2000/svg" xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs_block">
+    <filter height="1.504" id="filter_blur" inkspace:collect="always" width="1.1575" x="-0.07875" y="-0.252">
+      <feGaussianBlur id="feGaussianBlur3780" inkspace:collect="always" stdDeviation="4.2" />
+    </filter>
+  </defs>
+  <title>blockdiag</title>
+  <desc>diagram {
+  Browser -&gt; "App server" [label = "GET /any/path, Cookie: dpa-sso-token=&lt;token&gt;"];
+             "App server" -&gt; "Another service" [label = "&lt;user&gt;, &lt;permission-token&gt;=sha256(&lt;permission[]&gt; &lt;token&gt;)"];
+                          "Another service" -&gt; "SSO portal" [label = "POST /permission/, user=&lt;user&gt;, token=&lt;permission-token&gt;"];
+                          "Another service" &lt;- "SSO portal" [label = "HTTP 200, X-Permission[]: &lt;permission&gt;"];
+                          "Another service" -&gt; "Another service" [label = "Check returned permissions"];
+  Browser &lt;- "App server" [label = "HTTP 200, Set-Cookie: dpa-sso-token=&lt;token&gt;"];
+}
+</desc>
+  <rect fill="rgb(0,0,0)" height="478" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="127" y="154" />
+  <rect fill="rgb(0,0,0)" height="432" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="154" />
+  <rect fill="rgb(0,0,0)" height="387" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="511" y="245" />
+  <rect fill="rgb(0,0,0)" height="78" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="703" y="336" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="67" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="259" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="451" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="643" y="46" />
+  <path d="M 128 80 L 128 642" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="478" stroke="rgb(0,0,0)" width="8" x="124" y="148" />
+  <path d="M 320 80 L 320 642" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="432" stroke="rgb(0,0,0)" width="8" x="316" y="148" />
+  <path d="M 512 80 L 512 642" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="387" stroke="rgb(0,0,0)" width="8" x="508" y="239" />
+  <path d="M 704 80 L 704 642" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="78" stroke="rgb(0,0,0)" width="8" x="700" y="330" />
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="64" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="42" x="128.0" y="66">Browser</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="256" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="60" x="320.0" y="66">App server</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="448" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="90" x="512.0" y="66">Another service</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="640" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="60" x="704.0" y="66">SSO portal</text>
+  <path d="M 136 148 L 312 148" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,144 312,148 304,152" stroke="rgb(0,0,0)" />
+  <path d="M 328 239 L 504 239" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="496,235 504,239 496,243" stroke="rgb(0,0,0)" />
+  <path d="M 520 330 L 696 330" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="688,326 696,330 688,334" stroke="rgb(0,0,0)" />
+  <path d="M 520 408 L 696 408" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="528,404 520,408 528,412" stroke="rgb(0,0,0)" />
+  <path d="M 520 486 L 608 486" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 608 486 L 608 502" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 608 502 L 520 502" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="528,498 520,502 528,506" stroke="rgb(0,0,0)" />
+  <path d="M 136 580 L 312 580" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,576 136,580 144,584" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="224.0" y="133">GET /any/path, Cookie: dpa-s</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="96" x="188.0" y="146">so-token=&lt;token&gt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="416.0" y="211">&lt;user&gt;, &lt;permission-token&gt;=s</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="416.0" y="224">ha256(&lt;permission[]&gt; &lt;token&gt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="6" x="335.0" y="237">)</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="608.0" y="309">POST /permission/, user=&lt;use</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="608.0" y="322">r&gt;, token=&lt;permission-token&gt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="612.0" y="393">HTTP 200, X-Permission[]: &lt;p</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="60" x="666.0" y="406">ermission&gt;</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="108" x="574.0" y="471">Check returned per</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="48" x="544.0" y="484">missions</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="168" x="228.0" y="565">HTTP 200, Set-Cookie: dpa-ss</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="90" x="267.0" y="578">o-token=&lt;token&gt;</text>
+</svg>

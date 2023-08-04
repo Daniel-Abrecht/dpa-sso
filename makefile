@@ -1,5 +1,5 @@
 
-all: token.svg
+all: token.svg permission-token.svg
 
 %.svg: %.seqdiag
 	seqdiag3 -T svg $^

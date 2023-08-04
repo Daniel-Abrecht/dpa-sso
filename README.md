@@ -32,6 +32,8 @@ Which origins can have which permissions needs to be specified in the config. Wh
 containing with a `permission` field, which contains the subset of allowed permissions. If there are none, the token is treated like an invalid token.
 The fields are also returned as HTTP Headers, prefixed with `X-`.
 
+![](permission-token.svg)
+
 ## Example
 
 The usecase for *permission token* is to allow a webbapplication to access other applications. Suppose there was a web mail application at origin `https://mail.example.com`.

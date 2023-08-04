@@ -1,0 +1,8 @@
+diagram {
+  Browser -> "App server" [label = "GET /any/path, Cookie: dpa-sso-token=<token>"];
+             "App server" -> "Another service" [label = "<user>, <permission-token>=sha256(<permission[]> <token>)"];
+                          "Another service" -> "SSO portal" [label = "POST /permission/, user=<user>, token=<permission-token>"];
+                          "Another service" <- "SSO portal" [label = "HTTP 200, X-Permission[]: <permission>"];
+                          "Another service" -> "Another service" [label = "Check returned permissions"];
+  Browser <- "App server" [label = "HTTP 200, Set-Cookie: dpa-sso-token=<token>"];
+}
