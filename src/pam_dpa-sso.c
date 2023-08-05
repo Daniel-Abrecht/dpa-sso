@@ -11,6 +11,8 @@
 
 #include <curl/curl.h>
 
+enum { MAX_PERMISSIONS = 128 };
+
 struct permission_result {
   char* origin;
   char** permission;
@@ -71,7 +73,6 @@ static struct permission_result* check_permission(const char *url, const char* u
   if(!origin)
     goto error;
 
-  enum { MAX_PERMISSIONS = 256 };
   char* permissions[MAX_PERMISSIONS];
   int n = 0;
   for(int i=0; n<MAX_PERMISSIONS; i++){
@@ -112,6 +113,36 @@ error:
   return 0;
 }
 
+static int splitstr(const int max, char* result[max], const char* cinput, const char*const delimiter){
+  if(!cinput || max <= 2)
+    return -1;
+  char* input = strdup(cinput);
+  if(!input)
+    return -1;
+  int i = 0;
+  for(char* res, *tmp=input; (res=strsep(&tmp,delimiter)); ){
+    result[i++] = res;
+    if(i+1 >= max){
+      result[0] = 0;
+      free(input);
+      return -1;
+    }
+  }
+  result[i] = 0;
+  return i;
+}
+
+static bool check_permissions(const char*const* required, const char*const* present){
+  for(const char*const* r=required; *r; r++){
+    for(const char*const* p=present; *p; p++)
+      if(!strcmp(*r, *p))
+        goto next;
+    return false;
+  next:;
+  }
+  return true;
+}
+
 __attribute__((visibility("default")))
 PAM_EXTERN int pam_sm_authenticate(
   pam_handle_t* pamh, int flags,
@@ -119,17 +150,18 @@ PAM_EXTERN int pam_sm_authenticate(
 ){
   (void)flags;
   const char* url = 0;
-  const char* permissions = 0;
   const char** arge = argv + argc;
+  char* permissions[MAX_PERMISSIONS];
+  permissions[0] = 0;
   for(int i=-argc; i<0; i++){
     if(i <= -2 && !strcmp("url",arge[i]) && !strncmp("https://",arge[i+1],8)){
       url = arge[++i];
     }else if(!strncmp("url=https://", arge[i], 12)){
       url = arge[i] + 4;
     }else if(i <= -2 && !strcmp("permission",arge[i])){
-      permissions = arge[++i];
+      splitstr(MAX_PERMISSIONS, permissions, arge[++i], ",");
     }else if(!strncmp("permission=", arge[i], 11)){
-      permissions = arge[i] + 11;
+      splitstr(MAX_PERMISSIONS, permissions, arge[i] + 11, ",");
     }
   }
 #ifdef HAVE_PAM_FAIL_DELAY
@@ -137,50 +169,62 @@ PAM_EXTERN int pam_sm_authenticate(
 #endif
   if(!url){
     pam_syslog(pamh, LOG_ERR, "url was not specified");
+    free(permissions[0]);
     return PAM_AUTHINFO_UNAVAIL;
   }
-  if(!permissions){
+  if(!permissions[0]){
     pam_syslog(pamh, LOG_ERR, "permission list was not specified");
+    free(permissions[0]);
     return PAM_AUTHINFO_UNAVAIL;
   }
   const char* user = 0;
   if(pam_get_user(pamh, &user, NULL) != PAM_SUCCESS){
     pam_syslog(pamh, LOG_ERR, "couldn't get username from PAM stack");
+    free(permissions[0]);
     return PAM_AUTH_ERR;
   }
   const char* password = 0;
   if(pam_get_authtok(pamh, PAM_AUTHTOK, &password, NULL) != PAM_SUCCESS){
     pam_syslog(pamh, LOG_ERR, "couldn't get password from PAM stack");
+    free(permissions[0]);
     return PAM_AUTH_ERR;
   }
   if(!strchr(password, ' ')){
     pam_syslog(pamh, LOG_WARNING, "password isn't a dpa-sso token");
+    free(permissions[0]);
     return PAM_AUTH_ERR;
+  }
+
+  { // Early plausibility check. Not all permissions may be valid, but if any are missing, we can error out early.
+    char* token_parts[MAX_PERMISSIONS];
+    int n = splitstr(MAX_PERMISSIONS, token_parts, password, " ");
+    if(n < 2){
+      pam_syslog(pamh, LOG_WARNING, n>=0 ? "password isn't a dpa-sso token" : "splitstr failed");
+      if(n) free(token_parts[0]);
+      return PAM_AUTH_ERR;
+    }
+    token_parts[--n] = 0; // The last part is the actual token
+    if(!check_permissions((const char*const*)permissions, (const char*const*)token_parts)){
+      pam_syslog(pamh, LOG_WARNING, "The token didn't have some required permissions");
+      free(token_parts[0]);
+      return PAM_AUTH_ERR;
+    }
+    free(token_parts[0]);
   }
 
   struct permission_result* result = check_permission(url, user, password);
   if(!result){
     pam_syslog(pamh, LOG_ERR, "verifying permission token failed");
+    free(permissions[0]);
     return PAM_AUTH_ERR;
   }
 
-  char* perms = strdup(permissions);
-  if(!perms){
-    pam_syslog(pamh, LOG_ERR, "strdup failed");
-    free(result);
-    return PAM_AUTH_ERR;
-  }
-  for(char *permission, *tmp=perms; (permission=strsep(&tmp,",")); ){
-    for(char**p=result->permission; *p; p++)
-      if(!strcmp(permission, *p))
-        goto next;
+  if(!check_permissions((const char*const*)permissions, (const char*const*)result->permission)){ // Only here do we have the permissions that were really valid
     pam_syslog(pamh, LOG_ERR, "The token didn't have some required permissions");
-    free(result);
     return PAM_AUTH_ERR;
-  next:;
   }
-  free(perms);
-  free(result);
+  free_permission_result(result);
+  free(permissions[0]);
 
   return PAM_SUCCESS;
 }
