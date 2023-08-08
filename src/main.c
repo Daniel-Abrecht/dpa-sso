@@ -282,16 +282,39 @@ static int authenticate_dpa_sso(request_rec* r){
   return HTTP_SEE_OTHER;
 }
 
+static void hide_token_from_query(char* query){
+  if(!query) return;
+  if(*query == '?')
+    query += 1;
+ retry:;
+  char* match = strstr(query, "token=");
+  if(!match) return;
+  if(match != query && match[-1] != '&'){
+    query = match + 6;
+    goto retry;
+  }
+  match += 6;
+  size_t end = strcspn(match,"& \t\r\n");
+  memset(match, '*', end);
+}
+
 static int preauth_set_token(request_rec* r){
   if(strcmp(r->uri, "/.well-known/dpa-sso/"))
     return DECLINED;
 
-  extern apr_status_t apreq_parse_query_string(apr_pool_t *pool, apr_table_t *t, const char *qs);
   apr_table_t* GET;
   ap_args_to_table(r, &GET);
 
   const char* token = apr_table_get(GET, "token");
   if(!token || !token[0] || !token[1]) return DECLINED;
+
+  /* Let's try to override the token, hopefully everywhere, so it hopefully won't get logged in the access log */
+  hide_token_from_query(r->args);
+  hide_token_from_query(r->parsed_uri.query);
+  if(r->unparsed_uri)
+    hide_token_from_query(strchr(r->unparsed_uri, '?'));
+  if(r->the_request)
+    hide_token_from_query(strchr(r->the_request, '?'));
 
   const char* location = apr_table_get(GET, "location");
   if(!location || !location[0])
