@@ -7,6 +7,15 @@ In the `config.php` file, you can configure where and how to save sessions, and 
 If the portal is opened normally, you can log in, check the sessions, log out of the current session, log out all your sessions,
 and change your password.
 
+# Security relevant limitations
+
+For the purpose of being able to retrieve a token transparently, using only HTTP redirects, it has to be passed to `/.well-known/dpa-sso/` using a GET parameter.
+For this reason, be careful with access logs, as they may include the token. The `libapache2-mod-auth-dpa-sso` module hides the token in the logs, but be
+careful if you use reverse proxies or the likes, as they may still log the token.
+
+JS currently can't be prevented from obtaining the origins token. Although same origin rules will prevent the token from being obtained directly using fetch,
+it can install a service worker, which in turn can intercept the token sent to the `/.well-known/dpa-sso/` endpoint.
+
 # Getting & renewing tokens
 
 If the page is opened with the `renew-token` GET or POST parameter set, and the `referer` GET or POST parameter is also set, a token will be checked,
