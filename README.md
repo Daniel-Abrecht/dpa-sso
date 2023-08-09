@@ -14,7 +14,12 @@ For this reason, be careful with access logs, as they may include the token. The
 careful if you use reverse proxies or the likes, as they may still log the token.
 
 JS currently can't be prevented from obtaining the origins token. Although same origin rules will prevent the token from being obtained directly using fetch,
-it can install a service worker, which in turn can intercept the token sent to the `/.well-known/dpa-sso/` endpoint.
+it can install a service worker, which in turn can intercept the token sent to the `/.well-known/dpa-sso/` endpoint. Consider restricting the installation of
+workers using a CSP:
+```
+Content-Security-Policy: worker-src 'none'
+```
+
 
 # Getting & renewing tokens
 
