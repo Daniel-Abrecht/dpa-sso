@@ -1,4 +1,4 @@
-<?php require("header.php") ?>
+<?php require(__DIR__."/header.php") ?>
 <form method="post" action="." style="float: right;"><input type="submit" name="logout-all" value="Alle Ausloggen" class="btn"/></form>
 <h1>Sessions</h1>
 <table>
@@ -35,4 +35,4 @@ foreach(\sso::loadSessionOfUser($login->user) as $session){
 ?>
   </tbody>
 </table>
-<?php require("footer.php") ?>
+<?php require(__DIR__."/footer.php") ?>

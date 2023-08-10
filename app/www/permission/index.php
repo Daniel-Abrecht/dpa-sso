@@ -1,6 +1,6 @@
 <?php
-
-require(__DIR__."/../sso.php");
+require(__DIR__."/../config.php");
+require(LIB_DIR."/sso.php");
 
 if(!@$_SERVER["HTTPS"]){
   header("HTTP/1.1 400 Bad Request");

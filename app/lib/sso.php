@@ -1,7 +1,5 @@
 <?php
 
-require(__DIR__."/config.php");
-
 class sso {
   public static function load(string $type, ...$id){
     switch($type){

@@ -32,7 +32,7 @@ session, the login page will be shown and the HTTP status will be 401. If the to
 matches, and the token isn't old, the existing token is returned. Otherwise, a new token is returned, if a session is specified, it is for the
 specified session, otherwise, it is for the same session as the old token. `Referer` can be overwritten using a get parameter named "referer".
 
-![](token.svg)
+![](docs/token.svg)
 
 # Constructing and checking a permission token
 
@@ -46,7 +46,7 @@ Which origins can have which permissions needs to be specified in the config. Wh
 containing with a `permission` field, which contains the subset of allowed permissions. If there are none, the token is treated like an invalid token.
 The fields are also returned as HTTP Headers, prefixed with `X-`.
 
-![](permission-token.svg)
+![](docs/permission-token.svg)
 
 ## Example
 

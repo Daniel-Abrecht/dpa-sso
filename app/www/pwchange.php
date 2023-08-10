@@ -1,4 +1,6 @@
-<?php require("header.php");
+<?php
+require(__DIR__."/config.php");
+require(LIB_DIR."/header.php");
 $error = [];
 $success = false;
 if( isset($_POST['oldpw' ])
@@ -61,4 +63,4 @@ if($success){
   <div><input type="submit" value="Speichern" /></div>
 </form>
 <?php } ?>
-<?php require("footer.php"); ?>
+<?php require(LIB_DIR."/footer.php"); ?>

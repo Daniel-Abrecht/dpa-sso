@@ -1,6 +1,6 @@
 <?php
-
-require(__DIR__."/sso.php");
+require(__DIR__."/config.php");
+require(LIB_DIR."/sso.php");
 
 if(!@$_SERVER["HTTPS"]){
   header("HTTP/1.1 400 Bad Request");
@@ -99,7 +99,7 @@ if(!$login){
   header('HTTP/1.0 401 Unauthorized');
   if(isset($_GET['basic']))
     header('WWW-Authenticate: Basic realm="SSO abrecht.li"');
-  require(__DIR__."/login.php");
+  require(LIB_DIR."/login.php");
   exit();
 }
 
@@ -130,6 +130,6 @@ if($referer && $renew_token !== null){
     header("Location: #");
     exit();
   }else if($_SERVER['REQUEST_METHOD'] !== 'HEAD'){
-    require("main.php");
+    require(LIB_DIR."/main.php");
   }
 }
