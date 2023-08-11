@@ -1,7 +1,7 @@
 <?php
 
-require(__DIR__."/passwordstore/htpasswd.php");
-require(__DIR__."/datastore/pdo.php");
+require(LIB_DIR."/passwordstore/htpasswd.php");
+require(LIB_DIR."/datastore/pdo.php");
 
 $db = new \PDO('mysql:dbname=sso;host=db.example.com.', "user", "password");
 $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
