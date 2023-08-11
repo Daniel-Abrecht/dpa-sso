@@ -2,6 +2,7 @@ PREFIX = /usr/local/
 APP_DIR = $(PREFIX)/share/dpa-sso-portal/
 LIB_DIR = $(APP_DIR)/lib/
 WWW_DIR = $(APP_DIR)/www/
+SQL_DIR = $(APP_DIR)/sql/
 CONFIG_FILE = /etc/dpa-sso-portal/config.php
 
 export APP_DIR WWW_DIR LIB_DIR CONFIG_FILE
@@ -12,10 +13,13 @@ help:
 	@echo "The config file will be at $(CONFIG_FILE) see the readme for more informations"
 
 install:
-	mkdir -p "$(DESTDIR)$(APP_DIR)"
 	rm -f "$(DESTDIR)$(LIB_DIR)config.php"
+	mkdir -p "$(DESTDIR)$(LIB_DIR)"
 	cp -r app/lib/./ "$(DESTDIR)$(LIB_DIR)"
+	mkdir -p "$(DESTDIR)$(WWW_DIR)"
 	cp -r app/www/./ "$(DESTDIR)$(WWW_DIR)"
+	mkdir -p "$(DESTDIR)$(SQL_DIR)"
+	cp -r sql/./ "$(DESTDIR)$(SQL_DIR)"
 	envsubst <app/config.php.in >"$(DESTDIR)$(WWW_DIR)config.php"
 	rm -f "$(DESTDIR)$(LIB_DIR)config.php"
 	ln -s "$(CONFIG_FILE)" "$(DESTDIR)$(LIB_DIR)config.php"
