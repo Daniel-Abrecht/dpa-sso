@@ -1,5 +1,5 @@
-PREFIX = /usr/local/
-APP_DIR = $(PREFIX)/share/dpa-sso-portal/
+prefix ?= /usr/local/
+APP_DIR = $(prefix)/share/dpa-sso-portal/
 LIB_DIR = $(APP_DIR)/lib/
 WWW_DIR = $(APP_DIR)/www/
 SQL_DIR = $(APP_DIR)/sql/
