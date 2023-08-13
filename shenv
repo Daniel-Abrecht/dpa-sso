@@ -1,0 +1,4 @@
+#!/bin/sh
+
+head -n 1 debian/changelog | sed -n 's/.*(\([^-)]*\)-\([^)]\+\)).*/VERSION=\1\nREVISION=\2/p'
+echo "NAME=$(sed -n 's/^Source: \(.*\)/\1/p' debian/control)"

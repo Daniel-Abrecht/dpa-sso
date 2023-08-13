@@ -1,0 +1,5 @@
+dpa-sso-portal (1.0.1-1) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Daniel Abrecht <public@dpa.li>  Sat, 12 Aug 2023 21:55:24 +0000

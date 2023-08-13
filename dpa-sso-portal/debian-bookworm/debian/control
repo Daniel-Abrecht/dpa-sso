@@ -1,0 +1,23 @@
+Source: dpa-sso-portal
+Section: web
+Priority: optional
+Maintainer: Daniel Abrecht <public@dpa.li>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+Standards-Version: 4.6.2
+Homepage: https://projects.dpa.li/dpa-sso/portal/
+#Vcs-Browser: https://salsa.debian.org/debian/dpa-sso-portal
+#Vcs-Git: https://salsa.debian.org/debian/dpa-sso-portal.git
+
+Package: dpa-sso-portal
+Architecture: all
+Depends:
+ php,
+ ${misc:Depends},
+Description: Simple SSO portal
+ This is a simple single sign on portal written in PHP.
+ It is mainly for the login of web applications.
+ It doesn't implement openid, oauth, saml, or anything like that (yet).
+ It just has a session, gives out a token for any origin that needs
+ one, and checks & renews the tokens.
