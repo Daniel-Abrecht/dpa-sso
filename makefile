@@ -1,12 +1,13 @@
 
+prefix ?= /usr/local/
 MODDIR = /etc/apache2/mods-available/
-PREFIX = /usr/local/
 SOURCES = $(shell find src/ -type f -iname "*.c")
 
 CFLAGS+=$(shell curl-config --cflags)
 LDLIBS+=$(shell curl-config --libs)
 
-export PREFIX
+export prefix
+export PREFIX=$(prefix)
 export CFLAGS
 export LDLIBS
 
@@ -21,7 +22,7 @@ clean:
 	rm -rf build bin
 
 install:
-	mkdir -p "$(DESTDIR)$(PREFIX)/lib/apache2/modules/"
-	cp "bin/mod_auth_dpa-sso.so" "$(DESTDIR)$(PREFIX)/lib/apache2/modules/mod_auth_dpa-sso.so~"
-	mv "$(DESTDIR)$(PREFIX)/lib/apache2/modules/mod_auth_dpa-sso.so~" "$(DESTDIR)$(PREFIX)/lib/apache2/modules/mod_auth_dpa-sso.so"
+	mkdir -p "$(DESTDIR)$(prefix)/lib/apache2/modules/"
+	cp "bin/mod_auth_dpa-sso.so" "$(DESTDIR)$(prefix)/lib/apache2/modules/mod_auth_dpa-sso.so~"
+	mv "$(DESTDIR)$(prefix)/lib/apache2/modules/mod_auth_dpa-sso.so~" "$(DESTDIR)$(prefix)/lib/apache2/modules/mod_auth_dpa-sso.so"
 	envsubst <"src/auth_dpa-sso.load.in" >"$(MODDIR)/auth_dpa-sso.load"
