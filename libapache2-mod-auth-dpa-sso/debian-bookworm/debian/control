@@ -1,0 +1,27 @@
+Source: libapache2-mod-auth-dpa-sso
+Section: httpd
+Priority: optional
+Maintainer: Daniel Abrecht <public@dpa.li>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ apache2-dev,
+ dh-apache2,
+Standards-Version: 4.6.2
+Homepage: https://projects.dpa.li/dpa-sso/httpd/
+#Vcs-Browser: https://salsa.debian.org/debian/libapache2-mod-auth-dpa-sso
+#Vcs-Git: https://salsa.debian.org/debian/libapache2-mod-auth-dpa-sso.git
+
+Package: libapache2-mod-auth-dpa-sso
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: Apache2 httpd auth module for dpa-sso portal
+ This is a simple, mostly transparent sso auth module.
+ It gets and renews tokens form the dpa-sso-portal, and
+ checks them on every request. The tokens are stored in a
+ browser cookie. See the readme of the portal for more infos on that.
+ .
+ You can also pass the user and token on to cgi scripts and such
+ things by configuring the module to add a fake basic auth header.

@@ -1,0 +1,5 @@
+libapache2-mod-auth-dpa-sso (1.0.1-1) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Daniel Abrecht <public@dpa.li>  Mon, 14 Aug 2023 19:58:59 +0000
