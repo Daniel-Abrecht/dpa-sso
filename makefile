@@ -25,4 +25,4 @@ install:
 	mkdir -p "$(DESTDIR)$(prefix)/lib/apache2/modules/"
 	cp "bin/mod_auth_dpa-sso.so" "$(DESTDIR)$(prefix)/lib/apache2/modules/mod_auth_dpa-sso.so~"
 	mv "$(DESTDIR)$(prefix)/lib/apache2/modules/mod_auth_dpa-sso.so~" "$(DESTDIR)$(prefix)/lib/apache2/modules/mod_auth_dpa-sso.so"
-	envsubst <"src/auth_dpa-sso.load.in" >"$(MODDIR)/auth_dpa-sso.load"
+	envsubst <"src/auth_dpa-sso.load.in" >"$(DESTDIR)$(MODDIR)/auth_dpa-sso.load"
