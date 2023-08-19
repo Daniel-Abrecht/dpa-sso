@@ -1,0 +1,34 @@
+Source: libpam-dpa-sso
+Section: devel
+Priority: optional
+Maintainer: Daniel Abrecht <public@dpa.li>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ libcurl-dev,
+ libpam0g-dev,
+Standards-Version: 4.6.2
+Homepage: https://projects.dpa.li/dpa-sso/httpd/
+#Vcs-Browser: https://salsa.debian.org/debian/libpam-dpa-sso
+#Vcs-Git: https://salsa.debian.org/debian/libpam-dpa-sso.git
+
+Package: libpam-dpa-sso
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: PAM module for verifying dpa-sso permission tokens
+ If you have a web application authenticated using dpa-sso which
+ needs access to a pam authenticated service, you can use this
+ module for that. This can be useful if you want to let your
+ webmail login into your mail server, for example.
+ . 
+ This works as follows. The webapplication gets a token from the
+ dpa-sso portal. The webapplication generates a token using it
+ and the permissions it needs. This module can then be added
+ to whatever service needs to be authenticated, with the
+ permissions needed for that specified there. This module will
+ simply query an endpoint of the dpa-sso portal to see if the
+ token is valid, and if it really contains the needed permissions.
+ .
+ See the readme for details.

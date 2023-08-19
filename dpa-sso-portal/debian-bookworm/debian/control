@@ -5,6 +5,7 @@ Maintainer: Daniel Abrecht <public@dpa.li>
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
+ libcurl-dev,
 Standards-Version: 4.6.2
 Homepage: https://projects.dpa.li/dpa-sso/portal/
 #Vcs-Browser: https://salsa.debian.org/debian/dpa-sso-portal

@@ -1,0 +1,5 @@
+libpam-dpa-sso (1.0.1-1) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Daniel Abrecht <public@dpa.li>  Thu, 17 Aug 2023 20:43:58 +0000
