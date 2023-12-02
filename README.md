@@ -74,5 +74,5 @@ It can also be set up using `sso-middleware-php` instead, but this currently isn
 
 See also the other branches:
 * `libapache2-mod-auth-dpa-sso`: An apache2 httpd auth module.
-* `sso-middleware-php`: A PAM auth module that checks permission tokens.
+* `libpam-dpa-sso`: A PAM auth module that checks permission tokens.
 * `sso-middleware-php`: standalone auth in PHP, mostly as a PoC.
